@@ -1,0 +1,83 @@
+{% extends "covidapp/base.html" %}
+{% block content %}
+{% load static %}
+{% load has_group %}
+{% if request.user|has_group:"Epidemiologists" %}
+<form class="form-horizontal" method="POST">
+    {% csrf_token %}
+    <div class="jumbotron">
+        <h4>Please enter only period if you would like to view to all patients who had visited the same location over the period.
+            <br>Add location and date interval if you want to specify for the query.<br><br>
+        </h4>
+        <div class="row spacer">
+            <div class="col-2">
+                <div class="input-group">
+                    {{ query_form.as_p }}       
+                </div>
+            </div> 
+            <button type="submit" class="btn btn-block btn-primary">Submit Query</button>
+        </div>   
+    </div>
+</form>
+
+
+
+
+
+
+    
+    {% if return_dict %}
+    <div class="container">
+        <table>
+            <thead>
+                <th>Patient Case Number</th>
+                <th>Patient Name</th>
+                <th>Date Case Confirmed</th>
+            </thead>
+
+            <tr>
+                {% for key, info in patient_dict.items %}
+                <td>{{ info }}</td>
+                {% endfor %}
+            </tr>
+           
+        </table>
+    </div>
+
+
+    <table>
+        <thead>
+            <th>Patient Case Number</th>
+            <th>Patient Name</th>
+            <th>Patient ID Number</th>
+            <th>Date Visited by this Patient </th>
+            <th>Detail</th>
+            <th>Date Visited by Selected Patient </th>
+            <th>Detail</th>
+        </thead>
+
+        {% for key, location in return_dict.items %}
+            
+
+            <tr>
+                <td>{{ location.entry_instance.patient.case_number }}</td>
+                <td>{{ location.entry_instance.patient.name }}</td>
+                <td>{{ location.entry_instance.patient.idn }}</td>
+                <td>{{ location.visitor_date }}</td>
+                <td>{{ location.entry_instance.details }}</td>
+                <td>{{ location.patient_date }}</td>
+                <td>{{ location.patient_detail }}</td>
+            </tr>
+
+
+
+        {% endfor %}
+    </table>
+    {% else %}
+            <h3>No matching result</h3>
+    {% endif %}
+{% else %}
+    <h4>This page is restricted for Epidemiologists</h4>
+    <h4>Authorization is required. Please inquire CHP admin</h4>
+{% endif %}
+{% endblock %}

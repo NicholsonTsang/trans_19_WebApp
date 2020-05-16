@@ -1,0 +1,26 @@
+{% extends "covidapp/base.html" %}
+{% block content %}
+{% load has_group %}
+{% if request.user|has_group:"Epidemiologists" or request.user|has_group:"Staff" %}
+<form class="form-horizontal" method="POST">
+    {% csrf_token %}
+    <div class="jumbotron">
+        <div class="row spacer">
+            <div class="col-2">
+                <div class="input-group">
+                    {{ locationForm.as_p }}       
+                </div>
+            </div> 
+        </div> 
+        <div class="row spacer">
+            <div class="col-4 offset-2"></div>
+                <button type="submit" class="btn btn-block btn-primary">Create</button>
+            </div>
+        </div>
+    </div> 
+
+</form>
+{% else %}
+<h3>Please Login First</h3>
+{% endif %}
+{% endblock %}
